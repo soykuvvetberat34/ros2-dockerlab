@@ -23,7 +23,7 @@ edilmiş, kendi kodunuz için başlangıç noktası olarak kullanabileceğiniz b
 ## İş takip panosu
 
 Geliştirme GitHub Projects panosunda kart bazlı takip edilir:
-**<PANO_LINKI_BURAYA>**
+**[ROS2 DockerLab Panosu](https://github.com/users/soykuvvetberat34/projects/7)**
 
 - Sütunlar: **Yapılacak → Devam Ediyor → Tamamlandı**
 - Kart metinleri ve kabul kriterleri: [docs/kartlar.md](docs/kartlar.md)
