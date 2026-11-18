@@ -52,7 +52,7 @@ Tüm komutları görmek için `make help` yazın.
 
 ## Özellik 1: Docker ile ROS 2 Humble ortamı
 
-Kart: [#1](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/1)
+Kart: [#1](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/1) · PR: [#6](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/6)
 
 `osrf/ros:humble-desktop` tabanlı imaj, host'taki `ros2_ws/` klasörünü konteynerde
 `/ros2_ws` olarak bağlar. Kodu host'ta istediğiniz editörle yazıp konteynerde derleyebilirsiniz.
@@ -70,7 +70,7 @@ Dosya konteyner listesinde görünür.
 
 ## Özellik 2: turtle_patrol paketi (kare devriye)
 
-Kart: [#2](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/2)
+Kart: [#2](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/2) · PR: [#7](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/7)
 
 `patrol` düğümü `/turtle1/pose` konusunu dinler ve `/turtle1/cmd_vel` konusuna hız komutu
 yayınlar. Başlangıç pozundan karenin dört köşesini hesaplar. Her köşede önce yerinde döner,
