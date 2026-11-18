@@ -28,3 +28,42 @@ Geliştirme GitHub Projects panosunda kart bazlı takip edilir:
 - Sütunlar: **Yapılacak → Devam Ediyor → Tamamlandı**
 - Kart metinleri ve kabul kriterleri: [docs/kartlar.md](docs/kartlar.md)
 - Her kart ayrı bir `feature/<no>-<ad>` branch'inde geliştirilir ve `Closes #N` içeren bir PR ile kapanır.
+
+## Gereksinimler
+
+- Linux (Ubuntu 22.04/24.04 üzerinde denendi) ve X11 masaüstü oturumu
+- Docker Engine 24+ ve Docker Compose v2 (`docker compose`)
+- GNU Make
+- Host'ta ROS 2 kurulu olması **gerekmez**. Kuruluysa da (ör. Jazzy) çakışmaz, çünkü
+  konteyner `ROS_DOMAIN_ID=42` kullanır.
+
+## Çalıştırma
+
+```bash
+git clone https://github.com/soykuvvetberat34/ros2-dockerlab.git
+cd ros2-dockerlab
+make build      # imajı derle (ilk sefer birkaç dakika sürer)
+make up         # konteyneri arka planda başlat
+make shell      # konteynerde bash aç (ROS ortamı hazır)
+make down       # işin bitince konteyneri kapat
+```
+
+Tüm komutları görmek için `make help` yazın.
+
+## Özellik 1: Docker ile ROS 2 Humble ortamı
+
+Kart: [#1](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/1)
+
+`osrf/ros:humble-desktop` tabanlı imaj, host'taki `ros2_ws/` klasörünü konteynerde
+`/ros2_ws` olarak bağlar. Kodu host'ta istediğiniz editörle yazıp konteynerde derleyebilirsiniz.
+GUI uygulamaları X11 üzerinden host ekranında açılır.
+
+**Nasıl denenir:**
+
+```bash
+make check       # ROS_DISTRO=humble ve /ros2_ws içeriğini yazdırır
+make turtlesim   # turtlesim penceresi host ekranında açılır (Ctrl+C ile kapatın)
+```
+
+Mount'u denemek için: host'ta `touch ros2_ws/deneme.txt`, ardından `make check`.
+Dosya konteyner listesinde görünür.
