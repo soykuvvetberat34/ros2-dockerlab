@@ -9,7 +9,8 @@ def normalize_angle(angle):
 
 
 def square_waypoints(x0, y0, theta0, side):
-    """Başlangıç pozundan sola dönerek çizilen karenin 4 köşesini döndür.
+    """
+    Başlangıç pozundan sola dönerek çizilen karenin 4 köşesini döndür.
 
     Son köşe başlangıç noktasıdır; böylece kare kapanır.
     """
@@ -27,7 +28,8 @@ def square_waypoints(x0, y0, theta0, side):
 
 def compute_command(x, y, theta, target, linear_speed, angular_speed,
                     angle_tolerance=0.02, distance_tolerance=0.02):
-    """Hedefe gitmek için (doğrusal, açısal) hız ve hedefe varıldı mı bilgisini döndür.
+    """
+    Hedefe gitmek için (doğrusal, açısal) hız ve hedefe varıldı mı bilgisini döndür.
 
     Önce yerinde döner, yön doğruysa düz ilerler. Böylece köşeler keskin olur.
     """

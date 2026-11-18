@@ -11,5 +11,6 @@ services:
       - ./ros2_ws:/ros2_ws
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     ipc: host
+    init: true   # sinyalleri iletir, zombie süreçleri temizler
     stdin_open: true
     tty: true
