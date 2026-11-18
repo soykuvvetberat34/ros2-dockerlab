@@ -1,0 +1,15 @@
+services:
+  ros2:
+    build: .
+    image: ros2-dockerlab:humble
+    container_name: ros2-dockerlab
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - ROS_DOMAIN_ID=42
+    volumes:
+      - ./ros2_ws:/ros2_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    ipc: host
+    stdin_open: true
+    tty: true
