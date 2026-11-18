@@ -67,3 +67,44 @@ make turtlesim   # turtlesim penceresi host ekranında açılır (Ctrl+C ile kap
 
 Mount'u denemek için: host'ta `touch ros2_ws/deneme.txt`, ardından `make check`.
 Dosya konteyner listesinde görünür.
+
+## Özellik 2: turtle_patrol paketi (kare devriye)
+
+Kart: [#2](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/2)
+
+`patrol` düğümü `/turtle1/pose` konusunu dinler ve `/turtle1/cmd_vel` konusuna hız komutu
+yayınlar. Başlangıç pozundan karenin dört köşesini hesaplar. Her köşede önce yerinde döner,
+sonra düz ilerler. Tur bitince durur. Geometri ve kontrol mantığı ROS'tan bağımsız
+`geometry.py` modülündedir, bu yüzden birim testiyle doğrulanabilir.
+
+| Parametre       | Varsayılan | Açıklama                   |
+|-----------------|-----------:|----------------------------|
+| `side_length`   | 3.0        | Kare kenarı (turtlesim birimi) |
+| `linear_speed`  | 1.5        | En yüksek ileri hız        |
+| `angular_speed` | 1.5        | En yüksek dönüş hızı       |
+| `laps`          | 1          | Tur sayısı                 |
+
+**Nasıl denenir:**
+
+```bash
+make test                     # paketi derler, birim + stil testlerini çalıştırır
+make patrol                   # turtlesim açılır, kaplumbağa kare çizer ve durur
+make patrol SIDE=2.0 LAPS=2   # daha küçük kare, iki tur
+```
+
+## Proje yapısı
+
+```
+ros2-dockerlab/
+├── Dockerfile               # ROS 2 Humble + colcon + test araçları
+├── docker-compose.yml       # ros2_ws mount'u ve X11 yönlendirmesi
+├── Makefile                 # build / up / shell / turtlesim / test / patrol / stop
+├── docs/kartlar.md          # Pano kartları ve kabul kriterleri
+├── scripts/create_board.sh  # Kartlardan issue açıp panoya ekler
+└── ros2_ws/src/turtle_patrol/
+    ├── turtle_patrol/
+    │   ├── geometry.py      # Kare köşeleri ve hız hesabı (saf Python)
+    │   └── patrol_node.py   # ROS 2 düğümü
+    ├── launch/patrol.launch.py
+    └── test/                # birim, flake8, pep257 testleri
+```
