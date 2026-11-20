@@ -4,7 +4,12 @@ import math
 
 import pytest
 
-from turtle_patrol.geometry import compute_command, normalize_angle, square_waypoints
+from turtle_patrol.geometry import (
+    compute_command,
+    normalize_angle,
+    polygon_waypoints,
+    square_waypoints,
+)
 
 
 def close(a, b, tol=1e-9):
@@ -75,3 +80,66 @@ def test_simulated_patrol_draws_square():
             pytest.fail(f'{target} hedefine ulaşılamadı')
     for (vx, vy), (tx, ty) in zip(visited, waypoints):
         assert math.hypot(vx - tx, vy - ty) < 0.05
+
+
+@pytest.mark.parametrize('sides', [3, 4, 5, 6, 8])
+def test_polygon_has_n_corners_and_closes(sides):
+    pts = polygon_waypoints(2.0, 3.0, 0.4, 1.5, sides)
+    assert len(pts) == sides
+    assert close(pts[-1][0], 2.0, 1e-9) and close(pts[-1][1], 3.0, 1e-9)
+
+
+@pytest.mark.parametrize('sides', [3, 5, 6])
+def test_polygon_sides_equal_side_length(sides):
+    side = 2.5
+    pts = [(4.0, 4.0)] + polygon_waypoints(4.0, 4.0, 1.1, side, sides)
+    for a, b in zip(pts, pts[1:]):
+        assert close(math.dist(a, b), side, 1e-9)
+
+
+@pytest.mark.parametrize('sides', [3, 6])
+def test_polygon_turns_left_by_exterior_angle(sides):
+    pts = [(0.0, 0.0)] + polygon_waypoints(0.0, 0.0, 0.0, 1.0, sides)
+    headings = [math.atan2(b[1] - a[1], b[0] - a[0]) for a, b in zip(pts, pts[1:])]
+    for h1, h2 in zip(headings, headings[1:]):
+        assert close(normalize_angle(h2 - h1), 2.0 * math.pi / sides, 1e-9)
+
+
+def test_triangle_corners():
+    pts = polygon_waypoints(0.0, 0.0, 0.0, 2.0, 3)
+    expected = [(2.0, 0.0), (1.0, math.sqrt(3.0)), (0.0, 0.0)]
+    for (x, y), (ex, ey) in zip(pts, expected):
+        assert close(x, ex, 1e-9) and close(y, ey, 1e-9)
+
+
+def test_polygon_with_four_sides_matches_square():
+    assert polygon_waypoints(1.0, 2.0, 0.3, 2.0, 4) == square_waypoints(1.0, 2.0, 0.3, 2.0)
+
+
+@pytest.mark.parametrize('sides', [0, 1, 2, -3])
+def test_polygon_rejects_less_than_three_sides(sides):
+    with pytest.raises(ValueError):
+        polygon_waypoints(0.0, 0.0, 0.0, 1.0, sides)
+
+
+def test_polygon_rejects_non_positive_side():
+    with pytest.raises(ValueError):
+        polygon_waypoints(0.0, 0.0, 0.0, -1.0, 6)
+
+
+@pytest.mark.parametrize('sides', [3, 6])
+def test_simulated_patrol_draws_polygon(sides):
+    """Kinematik simülasyonla üçgen ve altıgen köşelerine varıldığını doğrula."""
+    x, y, theta, dt = 5.5, 5.5, 0.0, 0.01
+    waypoints = polygon_waypoints(x, y, theta, 2.0, sides)
+    for target in waypoints:
+        for _ in range(10000):
+            v, w, reached = compute_command(x, y, theta, target, 1.5, 1.5)
+            if reached:
+                break
+            theta += w * dt
+            x += v * math.cos(theta) * dt
+            y += v * math.sin(theta) * dt
+        else:
+            pytest.fail(f'{target} hedefine ulaşılamadı')
+        assert math.hypot(x - target[0], y - target[1]) < 0.05
