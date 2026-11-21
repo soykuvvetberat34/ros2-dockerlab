@@ -94,7 +94,7 @@ make patrol SIDE=2.0 LAPS=2   # daha küçük kare, iki tur
 
 ### Farklı devriye şekilleri
 
-Kart: [#4](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/4)
+Kart: [#4](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/4) · PR: [#8](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/8)
 
 `sides` parametresiyle kaplumbağa kare dışında herhangi bir düzgün çokgeni çizebilir.
 Her köşede dış açı kadar (360° / kenar sayısı) sola döner. Varsayılan değer 4 olduğu için
