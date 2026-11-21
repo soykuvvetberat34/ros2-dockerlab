@@ -92,6 +92,27 @@ make patrol                   # turtlesim açılır, kaplumbağa kare çizer ve 
 make patrol SIDE=2.0 LAPS=2   # daha küçük kare, iki tur
 ```
 
+### Farklı devriye şekilleri
+
+Kart: [#4](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/4)
+
+`sides` parametresiyle kaplumbağa kare dışında herhangi bir düzgün çokgeni çizebilir.
+Her köşede dış açı kadar (360° / kenar sayısı) sola döner. Varsayılan değer 4 olduğu için
+parametre verilmezse eskisi gibi kare çizer. 3'ten küçük değerler reddedilir.
+
+| Parametre | Varsayılan | Açıklama                                  |
+|-----------|-----------:|-------------------------------------------|
+| `sides`   | 4          | Kenar sayısı (3 üçgen, 5 beşgen, 6 altıgen) |
+
+```bash
+make patrol SIDES=3            # üçgen
+make patrol SIDES=6 SIDE=2.0   # altıgen (ekrandan taşmaması için kenarı kısaltın)
+make patrol SIDES=8 SIDE=1.5   # sekizgen
+```
+
+Turtlesim alanı 11x11 birimdir. Kenar sayısı arttıkça şekil büyüdüğü için `SIDE` değerini
+küçültmek gerekir.
+
 ## Proje yapısı
 
 ```
@@ -103,7 +124,7 @@ ros2-dockerlab/
 ├── scripts/create_board.sh  # Kartlardan issue açıp panoya ekler
 └── ros2_ws/src/turtle_patrol/
     ├── turtle_patrol/
-    │   ├── geometry.py      # Kare köşeleri ve hız hesabı (saf Python)
+    │   ├── geometry.py      # Çokgen köşeleri ve hız hesabı (saf Python)
     │   └── patrol_node.py   # ROS 2 düğümü
     ├── launch/patrol.launch.py
     └── test/                # birim, flake8, pep257 testleri
