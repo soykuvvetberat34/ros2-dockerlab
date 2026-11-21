@@ -3,7 +3,7 @@
 <package format="3">
   <name>turtle_patrol</name>
   <version>0.1.0</version>
-  <description>Turtlesim kaplumbağasını konum geri beslemesiyle kare çizerek devriye gezdirir.</description>
+  <description>Turtlesim kaplumbağasına kare, üçgen gibi şekiller çizdirir.</description>
   <maintainer email="soykuvvetberat34@users.noreply.github.com">Berat Soykuvvet</maintainer>
   <license>MIT</license>
 

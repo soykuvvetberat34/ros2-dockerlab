@@ -1,131 +1,124 @@
 # ROS2 DockerLab
 
-ROS 2 Humble için Docker tabanlı, tek komutla açılan bir geliştirme ortamı ve bu ortamda
-çalışan örnek bir paket (`turtle_patrol`).
+Docker içinde çalışan bir ROS 2 Humble ortamı ve bu ortamda yazdığım küçük bir örnek paket
+(`turtle_patrol`).
 
-## Problem ve kullanıcı
+## Neden bu proje?
 
-**Problem:** ROS 2 her Ubuntu sürümüne yalnızca bir dağıtımla bağlıdır. Humble Ubuntu 22.04'e,
-Jazzy 24.04'e bağlıdır. Dersler ve örnek kodlar çoğunlukla Humble'a göre hazırlanır, ama öğrencilerin
-bilgisayarında farklı bir Ubuntu ya da farklı bir ROS sürümü kurulu olur. Doğru sürümü kurmak
-saatler alır, host sistemi bozabilir ve "bende çalışıyordu" sorunlarına yol açar.
+ROS 2'nin her sürümü belli bir Ubuntu sürümüne bağlı. Derste Humble kullanıyoruz, Humble de
+Ubuntu 22.04 istiyor. Benim bilgisayarımda ve birçok arkadaşımda farklı bir Ubuntu ya da farklı
+bir ROS sürümü kurulu olduğu için ders örneklerini çalıştırmak sorun oluyordu. Doğru sürümü
+kurmak uzun sürüyor ve bazen sistemi bozuyor.
 
-**Çözüm:** Bu depo, host'ta hangi sürüm kurulu olursa olsun `make build && make up` ile aynı
-ROS 2 Humble ortamını açar. Kaynak kod host'ta durur ve konteynere bağlanır. GUI araçları
-(turtlesim, rviz) host ekranında çalışır. `turtle_patrol` paketi bu ortamda yazılıp test
-edilmiş, kendi kodunuz için başlangıç noktası olarak kullanabileceğiniz bir örnektir.
+Bu projede ROS 2 Humble'ı bir Docker konteynerine koydum. Bilgisayarda hangi sürüm kurulu olursa
+olsun `make build` ve `make up` ile herkes aynı ortamı açabiliyor. Kodlar bilgisayarda duruyor,
+konteyner sadece derleyip çalıştırıyor. Turtlesim gibi pencereli programlar da normal ekranda açılıyor.
 
-**Kimin için:**
+Kimler kullanabilir:
 - ROS 2 öğrenen ve kurulumla uğraşmak istemeyen öğrenciler
-- Herkesin aynı ortamda çalışmasını isteyen ders yürütücüleri ve laboratuvar sorumluları
-- Host'ta Jazzy kullanırken Humble projelerini de çalıştırması gereken geliştiriciler
+- Labda herkesin aynı ortamda çalışmasını isteyen hocalar ve asistanlar
 
-## İş takip panosu
+## Pano
 
-Geliştirme GitHub Projects panosunda kart bazlı takip edilir:
-**[ROS2 DockerLab Panosu](https://github.com/users/soykuvvetberat34/projects/7)**
+İşleri GitHub Projects'te takip ettim:
+https://github.com/users/soykuvvetberat34/projects/7
 
-- Sütunlar: **Yapılacak → Devam Ediyor → Tamamlandı**
-- Kart metinleri ve kabul kriterleri: [docs/kartlar.md](docs/kartlar.md)
-- Her kart ayrı bir `feature/<no>-<ad>` branch'inde geliştirilir ve `Closes #N` içeren bir PR ile kapanır.
+Panoda "Yapılacak", "Devam Ediyor" ve "Tamamlandı" sütunları var. Kartların metinleri
+[docs/kartlar.md](docs/kartlar.md) dosyasında da duruyor. Her kart için ayrı bir branch açıp
+PR ile main'e birleştirdim.
 
-## Gereksinimler
+## Gerekenler
 
-- Linux (Ubuntu 22.04/24.04 üzerinde denendi) ve X11 masaüstü oturumu
-- Docker Engine 24+ ve Docker Compose v2 (`docker compose`)
-- GNU Make
-- Host'ta ROS 2 kurulu olması **gerekmez**. Kuruluysa da (ör. Jazzy) çakışmaz, çünkü
-  konteyner `ROS_DOMAIN_ID=42` kullanır.
+- Linux (Ubuntu 24.04'te denedim)
+- Docker ve Docker Compose
+- make
+
+Bilgisayarda ROS kurulu olması gerekmiyor.
 
 ## Çalıştırma
 
 ```bash
 git clone https://github.com/soykuvvetberat34/ros2-dockerlab.git
 cd ros2-dockerlab
-make build      # imajı derle (ilk sefer birkaç dakika sürer)
-make up         # konteyneri arka planda başlat
-make shell      # konteynerde bash aç (ROS ortamı hazır)
-make down       # işin bitince konteyneri kapat
+make build    # imajı oluşturur, ilk seferde birkaç dakika sürüyor
+make up       # konteyneri başlatır
+make shell    # konteynerin içine girer
+make down     # konteyneri kapatır
 ```
 
-Tüm komutları görmek için `make help` yazın.
+`make help` bütün komutları listeler.
 
 ## Özellik 1: Docker ile ROS 2 Humble ortamı
 
-Kart: [#1](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/1) · PR: [#6](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/6)
+Kart: [#1](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/1), PR: [#6](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/6)
 
-`osrf/ros:humble-desktop` tabanlı imaj, host'taki `ros2_ws/` klasörünü konteynerde
-`/ros2_ws` olarak bağlar. Kodu host'ta istediğiniz editörle yazıp konteynerde derleyebilirsiniz.
-GUI uygulamaları X11 üzerinden host ekranında açılır.
+İmaj `osrf/ros:humble-desktop` üzerine kurulu. Bilgisayardaki `ros2_ws/` klasörü konteynerde
+`/ros2_ws` olarak görünüyor, yani kodu istediğim editörde yazıp konteynerde derleyebiliyorum.
 
-**Nasıl denenir:**
+Denemek için:
 
 ```bash
-make check       # ROS_DISTRO=humble ve /ros2_ws içeriğini yazdırır
-make turtlesim   # turtlesim penceresi host ekranında açılır (Ctrl+C ile kapatın)
+make check       # ROS_DISTRO=humble yazmalı ve /ros2_ws içeriği listelenmeli
+make turtlesim   # turtlesim penceresi açılmalı (Ctrl+C ile kapanır)
 ```
 
-Mount'u denemek için: host'ta `touch ros2_ws/deneme.txt`, ardından `make check`.
-Dosya konteyner listesinde görünür.
+Klasör bağlantısını denemek için `touch ros2_ws/deneme.txt` yazıp tekrar `make check`
+çalıştırın, dosya listede görünür.
 
-## Özellik 2: turtle_patrol paketi (kare devriye)
+## Özellik 2: turtle_patrol paketi
 
-Kart: [#2](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/2) · PR: [#7](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/7)
+Kart: [#2](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/2), PR: [#7](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/7)
 
-`patrol` düğümü `/turtle1/pose` konusunu dinler ve `/turtle1/cmd_vel` konusuna hız komutu
-yayınlar. Başlangıç pozundan karenin dört köşesini hesaplar. Her köşede önce yerinde döner,
-sonra düz ilerler. Tur bitince durur. Geometri ve kontrol mantığı ROS'tan bağımsız
-`geometry.py` modülündedir, bu yüzden birim testiyle doğrulanabilir.
+`patrol` düğümü kaplumbağanın konumunu (`/turtle1/pose`) okuyor ve ona hız komutu
+(`/turtle1/cmd_vel`) gönderiyor. Başladığı yerden bir kare çizip duruyor. Köşelerde önce
+dönüyor, sonra düz gidiyor. Hesaplamaları `geometry.py` dosyasına ayırdım, böylece ROS
+olmadan test edebildim.
 
-| Parametre       | Varsayılan | Açıklama                   |
-|-----------------|-----------:|----------------------------|
-| `side_length`   | 3.0        | Kare kenarı (turtlesim birimi) |
-| `linear_speed`  | 1.5        | En yüksek ileri hız        |
-| `angular_speed` | 1.5        | En yüksek dönüş hızı       |
-| `laps`          | 1          | Tur sayısı                 |
+Ayarlanabilen parametreler:
 
-**Nasıl denenir:**
+| Parametre       | Varsayılan | Açıklama           |
+|-----------------|-----------:|--------------------|
+| `side_length`   | 3.0        | Kenar uzunluğu     |
+| `linear_speed`  | 1.5        | En yüksek ileri hız |
+| `angular_speed` | 1.5        | En yüksek dönüş hızı |
+| `laps`          | 1          | Tur sayısı         |
+
+Denemek için:
 
 ```bash
-make test                     # paketi derler, birim + stil testlerini çalıştırır
-make patrol                   # turtlesim açılır, kaplumbağa kare çizer ve durur
+make test                     # testleri çalıştırır
+make patrol                   # kaplumbağa kare çizer
 make patrol SIDE=2.0 LAPS=2   # daha küçük kare, iki tur
 ```
 
-### Farklı devriye şekilleri
+### Ek: farklı şekiller
 
-Kart: [#4](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/4) · PR: [#8](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/8)
+Kart: [#4](https://github.com/soykuvvetberat34/ros2-dockerlab/issues/4), PR: [#8](https://github.com/soykuvvetberat34/ros2-dockerlab/pull/8)
 
-`sides` parametresiyle kaplumbağa kare dışında herhangi bir düzgün çokgeni çizebilir.
-Her köşede dış açı kadar (360° / kenar sayısı) sola döner. Varsayılan değer 4 olduğu için
-parametre verilmezse eskisi gibi kare çizer. 3'ten küçük değerler reddedilir.
-
-| Parametre | Varsayılan | Açıklama                                  |
-|-----------|-----------:|-------------------------------------------|
-| `sides`   | 4          | Kenar sayısı (3 üçgen, 5 beşgen, 6 altıgen) |
+Sonradan `sides` parametresini ekledim. Kare yerine üçgen, altıgen gibi başka şekiller de
+çizilebiliyor. Verilmezse 4 kabul ediliyor, yani yine kare çiziyor.
 
 ```bash
 make patrol SIDES=3            # üçgen
-make patrol SIDES=6 SIDE=2.0   # altıgen (ekrandan taşmaması için kenarı kısaltın)
-make patrol SIDES=8 SIDE=1.5   # sekizgen
+make patrol SIDES=6 SIDE=2.0   # altıgen
 ```
 
-Turtlesim alanı 11x11 birimdir. Kenar sayısı arttıkça şekil büyüdüğü için `SIDE` değerini
-küçültmek gerekir.
+Turtlesim ekranı küçük olduğu için kenar sayısı artınca `SIDE` değerini düşürmek gerekiyor,
+yoksa kaplumbağa duvara çarpıyor.
 
-## Proje yapısı
+## Dosyalar
 
 ```
 ros2-dockerlab/
-├── Dockerfile               # ROS 2 Humble + colcon + test araçları
-├── docker-compose.yml       # ros2_ws mount'u ve X11 yönlendirmesi
-├── Makefile                 # build / up / shell / turtlesim / test / patrol / stop
-├── docs/kartlar.md          # Pano kartları ve kabul kriterleri
-├── scripts/create_board.sh  # Kartlardan issue açıp panoya ekler
+├── Dockerfile               # ROS 2 Humble imajı
+├── docker-compose.yml       # klasör bağlantısı ve ekran ayarı
+├── Makefile                 # kısa komutlar
+├── docs/kartlar.md          # pano kartları
+├── scripts/create_board.sh  # kartları GitHub'a issue olarak ekleyen betik
 └── ros2_ws/src/turtle_patrol/
     ├── turtle_patrol/
-    │   ├── geometry.py      # Çokgen köşeleri ve hız hesabı (saf Python)
+    │   ├── geometry.py      # köşe ve hız hesapları
     │   └── patrol_node.py   # ROS 2 düğümü
     ├── launch/patrol.launch.py
-    └── test/                # birim, flake8, pep257 testleri
+    └── test/                # testler
 ```

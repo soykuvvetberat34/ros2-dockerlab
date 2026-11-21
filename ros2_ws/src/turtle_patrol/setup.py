@@ -17,7 +17,7 @@ setup(
     zip_safe=True,
     maintainer='Berat Soykuvvet',
     maintainer_email='soykuvvetberat34@users.noreply.github.com',
-    description='Turtlesim kaplumbağasını kare çizerek devriye gezdirir.',
+    description='Turtlesim kaplumbağasına kare, üçgen gibi şekiller çizdirir.',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
