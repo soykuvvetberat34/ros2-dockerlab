@@ -39,6 +39,7 @@ turtlesim: up stop xhost ## Turtlesim penceresini aç
 FIX_OWNER := chown -R $(shell id -u):$(shell id -g) /ros2_ws/build /ros2_ws/install /ros2_ws/log
 SIDE ?= 3.0
 LAPS ?= 1
+SIDES ?= 4
 
 colcon: up ## ros2_ws içindeki paketleri derle
 	$(EXEC) '$(ROS_ENV) cd /ros2_ws && colcon build --symlink-install; rc=$$?; $(FIX_OWNER); exit $$rc'
@@ -46,8 +47,8 @@ colcon: up ## ros2_ws içindeki paketleri derle
 test: colcon ## Paketleri test et (birim + flake8 + pep257)
 	$(EXEC) '$(ROS_ENV) cd /ros2_ws && colcon test --event-handlers console_direct+; colcon test-result --verbose; rc=$$?; $(FIX_OWNER); exit $$rc'
 
-patrol: colcon stop xhost ## Turtlesim aç, kaplumbağa kare çizsin (SIDE=3.0 LAPS=1)
-	$(EXEC) '$(ROS_ENV) source /ros2_ws/install/setup.bash && ros2 launch turtle_patrol patrol.launch.py side_length:=$(SIDE) laps:=$(LAPS)'
+patrol: colcon stop xhost ## Turtlesim aç, kaplumbağa çokgen çizsin (SIDES=4 SIDE=3.0 LAPS=1)
+	$(EXEC) '$(ROS_ENV) source /ros2_ws/install/setup.bash && ros2 launch turtle_patrol patrol.launch.py side_length:=$(SIDE) laps:=$(LAPS) sides:=$(SIDES)'
 
 clean: up ## colcon çıktılarını sil
 	$(EXEC) 'rm -rf /ros2_ws/build /ros2_ws/install /ros2_ws/log'

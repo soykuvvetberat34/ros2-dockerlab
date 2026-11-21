@@ -1,11 +1,11 @@
-"""Kaplumbağayı konum geri beslemesiyle kare çizerek devriye gezdiren düğüm."""
+"""Kaplumbağayı konum geri beslemesiyle düzgün çokgen çizerek devriye gezdiren düğüm."""
 
 from geometry_msgs.msg import Twist
 import rclpy
 from rclpy.node import Node
 from turtlesim.msg import Pose
 
-from turtle_patrol.geometry import compute_command, square_waypoints
+from turtle_patrol.geometry import compute_command, polygon_waypoints
 
 
 class PatrolNode(Node):
@@ -17,6 +17,9 @@ class PatrolNode(Node):
         self.linear_speed = self.declare_parameter('linear_speed', 1.5).value
         self.angular_speed = self.declare_parameter('angular_speed', 1.5).value
         self.laps = self.declare_parameter('laps', 1).value
+        self.sides = self.declare_parameter('sides', 4).value
+        if self.sides < 3:
+            raise ValueError(f'sides en az 3 olmalı (verilen: {self.sides})')
 
         self.cmd_pub = self.create_publisher(Twist, '/turtle1/cmd_vel', 10)
         self.create_subscription(Pose, '/turtle1/pose', self.on_pose, 10)
@@ -27,13 +30,14 @@ class PatrolNode(Node):
         self.index = 0
         self.done = False
         self.get_logger().info(
-            f'Devriye: kenar={self.side} m, tur={self.laps}, '
+            f'Devriye: {self.sides} kenar, kenar={self.side} m, tur={self.laps}, '
             f'hız={self.linear_speed} m/s')
 
     def on_pose(self, msg):
         self.pose = msg
         if not self.waypoints:
-            corners = square_waypoints(msg.x, msg.y, msg.theta, self.side)
+            corners = polygon_waypoints(
+                msg.x, msg.y, msg.theta, self.side, self.sides)
             self.waypoints = corners * self.laps
             self.get_logger().info(f'Başlangıç: ({msg.x:.2f}, {msg.y:.2f})')
 
