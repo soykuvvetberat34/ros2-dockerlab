@@ -8,22 +8,33 @@ def normalize_angle(angle):
     return (angle + math.pi) % (2.0 * math.pi) - math.pi
 
 
-def square_waypoints(x0, y0, theta0, side):
+def polygon_waypoints(x0, y0, theta0, side, sides):
     """
-    Başlangıç pozundan sola dönerek çizilen karenin 4 köşesini döndür.
+    Başlangıç pozundan sola dönerek çizilen düzgün çokgenin köşelerini döndür.
 
-    Son köşe başlangıç noktasıdır; böylece kare kapanır.
+    Her köşede dış açı kadar (2*pi/sides) dönülür. Son köşe başlangıç
+    noktasıdır; böylece şekil kapanır.
     """
     if side <= 0:
         raise ValueError('side pozitif olmalı')
+    if sides < 3:
+        raise ValueError('sides en az 3 olmalı')
+    turn = 2.0 * math.pi / sides
     points = []
     x, y, heading = x0, y0, theta0
-    for _ in range(4):
+    for _ in range(sides):
         x += side * math.cos(heading)
         y += side * math.sin(heading)
         points.append((x, y))
-        heading += math.pi / 2.0
+        heading += turn
+    # Kayan nokta hatası birikmesin: son köşe tam olarak başlangıç noktası
+    points[-1] = (x0, y0)
     return points
+
+
+def square_waypoints(x0, y0, theta0, side):
+    """Başlangıç pozundan sola dönerek çizilen karenin 4 köşesini döndür."""
+    return polygon_waypoints(x0, y0, theta0, side, 4)
 
 
 def compute_command(x, y, theta, target, linear_speed, angular_speed,
